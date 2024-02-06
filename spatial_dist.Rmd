@@ -1,0 +1,191 @@
+---
+title: "pointprocess"
+author: "Anthony Pierre"
+date: "2023-12-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("~/M2 DE/Semester 1/Computer Science Project/R Code")
+```
+
+```{r}
+library(spatstat)
+```
+
+```{r}
+df <- read.csv('phl_data_cart.csv', header=TRUE)
+```
+
+```{r}
+# Creating the ppp3 object
+x <- df$x
+y <- df$y
+z <- df$z
+```
+
+```{r}
+sum(is.na(x))  # Counts the number of NA values in x
+sum(is.na(y))  # Counts the number of NA values in y
+sum(is.na(z))
+```
+
+```{r}
+complete_cases <- complete.cases(x, y, z)
+x <- x[complete_cases]
+y <- y[complete_cases]
+z <- z[complete_cases]
+```
+
+
+```{r}
+xrange <- range(x, na.rm = TRUE)
+yrange <- range(y, na.rm = TRUE)
+zrange <- range(z, na.rm = TRUE)
+
+W <- box3(xrange, yrange, zrange)
+```
+
+```{r}
+spatial_data <- pp3(x, y, z, W)
+```
+
+```{r}
+summary(spatial_data)
+```
+
+```{r}
+plot(spatial_data)
+```
+
+Values bK (r) > πr2 suggest clustering, while bK (r) < πr2 suggests a regular pattern.
+
+```{r}
+K <- K3est(spatial_data)
+plot(K)
+# Clustered
+```
+
+Values b F(r) > Fpois(r) suggest that empty space distances in the point pattern are shorter than for a Poisson process, suggesting a regularly space pattern; while
+values b F(r) < Fpois(r) suggest a clustered pattern.
+
+```{r}
+Fc <- F3est(spatial_data)
+plot(Fc)
+# Clustered
+```
+
+Values bG(r) > Gpois(r) suggest that nearest
+neighbour distances in the point pattern are shorter than for a Poisson process, suggesting a
+clustered pattern; while values bG(r) < Gpois(r) suggest a regular (inhibited) pattern.
+
+```{r}
+G <- G3est(spatial_data)
+plot(G)
+# Clustered
+```
+
+The value g(r) = 1 corresponds to complete randomness; for the
+Poisson process the pair correlation is gpois(r) ≡ 1. For other processes, values g(r) > 1 suggest
+clustering or attraction at distance r, while values g(r) < 1 suggest inhibition or regularity
+
+```{r}
+plot(pcf3est(spatial_data))
+# Clustered
+```
+
+Now, focusing on only nearby stars that seem to form a cluster around the solar system. I focus on the parsecs distance where 50% of stars are located.
+
+```{r}
+df <- read.csv('phl_data_cart.csv', header=TRUE)
+```
+
+```{r}
+threshold <- quantile(df$S_DISTANCE, 0.5, na.rm = TRUE)
+```
+
+```{r}
+df_filtered <- df[df$S_DISTANCE < threshold, ]
+```
+
+```{r}
+# Creating the ppp3 object
+x <- df_filtered$x
+y <- df_filtered$y
+z <- df_filtered$z
+```
+
+```{r}
+sum(is.na(x))  # Counts the number of NA values in x
+sum(is.na(y))  # Counts the number of NA values in y
+sum(is.na(z))
+```
+
+```{r}
+complete_cases <- complete.cases(x, y, z)
+x <- x[complete_cases]
+y <- y[complete_cases]
+z <- z[complete_cases]
+```
+
+
+```{r}
+xrange <- range(x, na.rm = TRUE)
+yrange <- range(y, na.rm = TRUE)
+zrange <- range(z, na.rm = TRUE)
+
+W <- box3(xrange, yrange, zrange)
+```
+
+```{r}
+spatial_data <- pp3(x, y, z, W)
+```
+
+```{r}
+summary(spatial_data)
+```
+
+```{r}
+plot(spatial_data)
+```
+
+Values bK (r) > πr2 suggest clustering, while bK (r) < πr2 suggests a regular pattern. Clustering
+
+```{r}
+K <- K3est(spatial_data)
+plot(K)
+# Clustered
+```
+
+Values b F(r) > Fpois(r) suggest that empty space distances in the point pattern are shorter than for a Poisson process, suggesting a regularly space pattern; while
+values b F(r) < Fpois(r) suggest a clustered pattern, so cluster
+
+```{r}
+Fc <- F3est(spatial_data)
+plot(Fc)
+# Clustered
+```
+
+Values bG(r) > Gpois(r) suggest that nearest
+neighbour distances in the point pattern are shorter than for a Poisson process, suggesting a
+clustered pattern; while values bG(r) < Gpois(r) suggest a regular (inhibited) pattern. Clustering at small distances.
+
+```{r}
+G <- G3est(spatial_data)
+plot(G)
+# Clustered
+```
+
+The value g(r) = 1 corresponds to complete randomness; for the
+Poisson process the pair correlation is gpois(r) ≡ 1. For other processes, values g(r) > 1 suggest
+clustering or attraction at distance r, while values g(r) < 1 suggest inhibition or regularity. So, clustering
+
+```{r}
+plot(pcf3est(spatial_data))
+# Clustered
+```
+
+
+
+
